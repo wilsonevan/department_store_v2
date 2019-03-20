@@ -9,6 +9,7 @@ import About from './components/About';
 import Navbar from './components/Navbar';
 import NoMatch from './components/NoMatch';
 import Departments from './components/Departments';
+import DepartmentForm from './components/DepartmentForm';
 
 
 class App extends Component {
@@ -21,7 +22,7 @@ class App extends Component {
             <Route exact path='/' component={Home} />
             <Route exact path='/about' component={About} />
             <Route exact path='/departments' component={Departments} />
-            {/* <Route exact path='/products/new' component={DepartmentForm} /> */}
+            <Route exact path='/departments/new' component={DepartmentForm} />
             {/* <Route exact path='/products/:id' component={DepartmentView} /> */}
             <Route component={NoMatch} />
           </Switch>
