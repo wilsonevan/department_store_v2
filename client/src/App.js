@@ -23,6 +23,7 @@ class App extends Component {
             <Route exact path='/about' component={About} />
             <Route exact path='/departments' component={Departments} />
             <Route exact path='/departments/new' component={DepartmentForm} />
+            <Route exact path='/departments/:id/edit' component={DepartmentForm} />
             {/* <Route exact path='/products/:id' component={DepartmentView} /> */}
             <Route component={NoMatch} />
           </Switch>

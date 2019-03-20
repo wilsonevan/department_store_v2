@@ -3,6 +3,7 @@ import { Header, Container, Grid, Menu, Segment, Icon, Button, } from 'semantic-
 import axios from 'axios';
 import { Link, } from 'react-router-dom';
 import Items from './Items';
+import DepartmentForm from './DepartmentForm';
 
 class Departments extends React.Component {
 	state = { 
@@ -23,18 +24,11 @@ class Departments extends React.Component {
 	}
 
 
-	addDept = (name) => {
-    // TODO make api call to rails server to add item
-    // TODO update state
-	}
-	
-
   updateDept = (id, newData) => {
-    // TODO make api call to update todo
-		axios.put(`/api/v1/departments/${id}`, {department: {name: newData}, }, )
+		axios.put(`/api/v1/departments/${id}`, {departments: {name: newData}, }, )
 			.then( res => {
 				// debugger
-				const department = this.state.department.map( t => {
+				const department = this.state.departments.map( t => {
 					if (t.id === id)
 						return res.data;
 					return t;
@@ -42,21 +36,16 @@ class Departments extends React.Component {
 			})
 			.catch( err => {
 				console.log(err);
-				// debugger
 			})
 
-		// TODO update state
-    // this.setState({ department, });
   }
 
 
   deleteDept = (id) => {
-    // TODO make api call to delete todo
-		// TODO remove it from state
-		axios.delete(`/api/items/${id}`)
+		axios.delete(`/api/v1/departments/${id}`)
     .then( res => {
-      const { department, } = this.state;
-      this.setState({ department: department.filter(d => d.id !== id), })
+			const { departments, } = this.state;
+      this.setState({ departments: departments.filter(d => d.id !== id), })
     })
   }
 
@@ -69,16 +58,6 @@ class Departments extends React.Component {
 			.then( res => {
 				this.setState( { items: res.data } )
 			})
-	}
-
-	handleEditClick = (id) => {
-		
-
-		let departmentName = this.state.departments[id].name;
-		
-		return
-		debugger
-		
 	}
 
 
@@ -102,19 +81,27 @@ class Departments extends React.Component {
 		else {
 			return (
 				<Grid>
-					<Grid.Column width={4}>
+					<Grid.Column width={6}>
 						{departments.map( department => (
 								<Menu fluid vertical tabular>
 									<Menu.Item name={department.name} active={activeItem === department.id } onClick={() => this.handleDeptClick(department.id)}>
 										{ department.name }
-										<Icon name='pencil square' size='small' onClick={() => this.handleEditClick(department.id)} />
+										<Button.Group floated='right' compact size='small' style={ styles.twoButtons } >
+											<Button icon as={Link} to={`/departments/${department.id}/edit`}>
+												<Icon name='pencil' />
+											</Button>
+											<Button icon color='red' onClick={() => this.deleteDept(department.id) }>
+												<Icon name='trash' />
+											</Button>
+										</Button.Group>
+										{/* onClick={() => this.handleEditClick(department.id)} */}
 									</Menu.Item>
 								</Menu>
 							))
 						}
 					</Grid.Column>
 
-					<Grid.Column stretched width={12}>
+					<Grid.Column stretched width={10}>
 						<Segment>
 							{ this.renderItems() }
 						</Segment>
@@ -124,6 +111,7 @@ class Departments extends React.Component {
 		}
 	}
 
+
 	render() {
 		return (
 			<Container>
@@ -131,12 +119,18 @@ class Departments extends React.Component {
 				<Button as={Link} to='/departments/new' color='blue' compact >
 					Create New Department
 				</Button>
-				{/* <Button color='grey' compact >Edit Existing Department</Button> */}
 				<br />
 				<br />
 				{ this.renderDepartments() }
 			</Container>
 		)
+	}
+}
+
+const styles = { 
+ 	twoButtons: { 
+		marginTop: '0px !important',
+		paddingTop: '0px !important',
 	}
 }
 
