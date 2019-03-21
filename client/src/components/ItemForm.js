@@ -15,15 +15,16 @@ class ItemForm extends React.Component {
 	componentDidMount() {
 		const dept_id = this.props.match.params.department_id;
 		const id = this.props.match.params.id;
-		let currentItem = this.state
+		// let currentItem = this.state
 		
 		if (id > 0) {
 			axios.get(`/api/v1/departments/${dept_id}/items/${id}`)
 			.then( res => {
-				currentItem = res.data;
+				// currentItem = res.data;
+				this.setState( { ...res.data } ) // This works!
 			})
-			debugger
-			this.setState( { ...currentItem } )
+			// this.setState( { ...currentItem } ) //DOES NOT WORK FOR SOME REASON
+
 		}
 	}
 
@@ -33,12 +34,12 @@ class ItemForm extends React.Component {
 		const dept_id = this.props.match.params.department_id
 		const id = this.props.match.params.id
 
-		if (this.props.match.params.id) { // If ID is PRESENT, then must be an edit function
+		if (this.props.match.params.id) { // If ID is PRESENT, then must be an EDIT function
 			axios.put(`/api/v1/departments/${dept_id}/items/${id}`, item )
 			.then( res => {
 				this.props.history.push(`/departments/${dept_id}/items/${id}`);
 			})
-		} 	
+		}
 		else { // If no ID present, then must be an ADD function
 			axios.post(`/api/v1/departments/${dept_id}/items`, item )
 			.then( res => {
@@ -59,7 +60,6 @@ class ItemForm extends React.Component {
 		const { name, description, price, } = this.state
 		const id = this.props.match.params.id
 
-		debugger
 		return (
 			<div>
 				{this.props.match.params.id ? 

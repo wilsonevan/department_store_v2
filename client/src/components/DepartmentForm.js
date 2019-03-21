@@ -9,17 +9,15 @@ class DepartmentForm extends React.Component {
 	
 	state = { ...this.defaultState };
 	
-	// DOES NOT WORK -- Attempt to show current name in the text-field when updating names
-	componentWillMount() {
+	// Loads the current values if EDITING
+	componentDidMount() {
 		let id = this.props.match.params.id;
-		let currentName = '';
 		
 		if (id > 0) {
 			axios.get(`/api/v1/departments/${id}`)
 			.then( res => {
-				currentName = res.data.name;
+				this.setState( {name: res.data.name } )
 			})
-			this.setState( { name: currentName } )
 		}
 	}
 
@@ -51,7 +49,6 @@ class DepartmentForm extends React.Component {
 	render() {
 		const { name, } = this.state
 
-		// debugger
 		return (
 			<div>
 				{this.props.match.params.id ? 
@@ -60,17 +57,14 @@ class DepartmentForm extends React.Component {
 					<Header as='h1'>New Department</Header>
 				}
 				<Form>
-					{/* <Form.Group widths='equal'> */}
 						<Form.Input 
 							label='Name'
 							placeholder={ this.props.match.params.id ? this.state.name : 'Name' }
-							// placeholder='Name'
 							name='name'
 							required
 							onChange={ this.handleChange }
 							value={ name }
 						/>
-					{/* </Form.Group> */}
 					<Form.Button onClick={ this.handleSubmit }>Submit</Form.Button>
 				</Form>
 			</div>
