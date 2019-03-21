@@ -7,22 +7,29 @@ import DepartmentForm from './DepartmentForm';
 
 class Departments extends React.Component {
 	state = { 
-		activeItem: 1,
+		activeDepartmentId: undefined,
+		activeDepartment: '',
 		departments: [],
 		items: [],
 	}
 
 
 	componentDidMount() {
-		// let firstActive = 1;
 		axios.get('/api/v1/departments')
 			.then( res => {
-				this.setState( { departments: res.data, activeItem: res.data[0].id, } )
+				// debugger
+				const activeID = res.data[0].id
+				const activeName = res.data[0].name
+				this.setState( { departments: res.data, activeDepartmentId: activeID, } )
+				this.handleDeptClick(activeID, activeName, )
+				// this.renderItems()
 			})
-
-		// Default to first item in the list
-		this.handleDeptClick(this.state.activeItem)
 	}
+	
+	// componentDidMount() {
+	// 	// debugger
+		
+	// }
 
 
   updateDept = (id, newData) => {
@@ -51,63 +58,90 @@ class Departments extends React.Component {
   }
 
 
-	handleDeptClick = (id) => {
-		this.setState({ activeItem: id })
+	handleDeptClick = (id, name ) => {
+		this.setState({ activeDepartmentId: id, activeDepartment: name })
+		// debugger
 
 		// Update State with items
 		axios.get(`/api/v1/departments/${id}/items`)
 			.then( res => {
-				this.setState( { items: res.data } )
+				// debugger
+				this.setState( { items: res.data, } )
 			})
+
 	}
 
 
 	renderItems() {
-		const { items, } = this.state;
+		const { items, activeDepartment, activeDepartmentId, } = this.state;
 
 		if ( items.length <= 0 ) {
-			return <Header as='h2'>No items Found</Header>
+			return (
+				<div>
+					<Header attached as='h2'>No items Found</Header>
+					<Segment attached>
+						<Items items={ items }/>
+					</Segment>
+				</div>
+			)
 		} else {
-			return <Items items={ items }/>
+			return (
+				<div>
+					<Header attached>
+						<Header as='h2' floated='left' >{activeDepartment}</Header>
+						<Button.Group floated='right' compact size='small' style={ styles.twoButtons } >
+							<Button icon as={Link} to={`/departments/${activeDepartmentId}/edit`}>
+								<Icon name='pencil' />
+							</Button>
+							<Button icon color='red' onClick={() => this.deleteDept(activeDepartmentId) }>
+								<Icon name='trash' />
+							</Button>
+						</Button.Group>
+						<br />
+						<br />
+					</Header>
+					<Segment attached >
+						<Items items={ items }/>
+					</Segment>
+				</div>
+			)
 		}
 	}
+
+	// renderActiveName() {
+	// 	const { activeDepartmentId, } = this.state.activeDepartmentId
+
+
+	// }
 	
 
 	renderDepartments() {
-		const { departments, activeItem, items, } = this.state;
+		const { departments, activeDepartmentId, } = this.state;
+
+		// const { departmentName } = this.state.departments[activeDepartmentId]
 
 		if ( departments.length <= 0 ) {
 			return <Header as='h2'>No Departments Found</Header>
 		} 
 		else {
 			return (
+				<Segment inverted color='grey' tertiary>
 				<Grid>
 					<Grid.Column width={5}>
-						{departments.map( department => (
-								<Menu fluid vertical tabular>
-									<Menu.Item name={department.name} active={activeItem === department.id } onClick={() => this.handleDeptClick(department.id)}>
-										{ department.name }
-										<Button.Group floated='right' compact size='small' style={ styles.twoButtons } >
-											<Button icon as={Link} to={`/departments/${department.id}/edit`}>
-												<Icon name='pencil' />
-											</Button>
-											<Button icon color='red' onClick={() => this.deleteDept(department.id) }>
-												<Icon name='trash' />
-											</Button>
-										</Button.Group>
-										{/* onClick={() => this.handleEditClick(department.id)} */}
-									</Menu.Item>
-								</Menu>
-							))
-						}
+						<Menu inverted color='grey' fluid vertical tabular>
+							{departments.map( department => (
+								<Menu.Item name={department.name} active={activeDepartmentId === department.id } onClick={() => this.handleDeptClick(department.id, department.name)}>
+									{ department.name }
+								</Menu.Item>
+							))}
+						</Menu>
 					</Grid.Column>
 
 					<Grid.Column stretched width={11}>
-						<Segment>
-							{ this.renderItems() }
-						</Segment>
+						{ this.renderItems() }
 					</Grid.Column>
 				</Grid>
+				</Segment>
 			)
 		}
 	}
