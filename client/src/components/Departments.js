@@ -14,9 +14,10 @@ class Departments extends React.Component {
 
 
 	componentDidMount() {
+		// let firstActive = 1;
 		axios.get('/api/v1/departments')
 			.then( res => {
-				this.setState( { departments: res.data } )
+				this.setState( { departments: res.data, activeItem: res.data[0].id, } )
 			})
 
 		// Default to first item in the list
@@ -81,7 +82,7 @@ class Departments extends React.Component {
 		else {
 			return (
 				<Grid>
-					<Grid.Column width={6}>
+					<Grid.Column width={5}>
 						{departments.map( department => (
 								<Menu fluid vertical tabular>
 									<Menu.Item name={department.name} active={activeItem === department.id } onClick={() => this.handleDeptClick(department.id)}>
@@ -101,7 +102,7 @@ class Departments extends React.Component {
 						}
 					</Grid.Column>
 
-					<Grid.Column stretched width={10}>
+					<Grid.Column stretched width={11}>
 						<Segment>
 							{ this.renderItems() }
 						</Segment>
