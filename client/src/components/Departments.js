@@ -13,29 +13,22 @@ class Departments extends React.Component {
 		items: [],
 	}
 
-
+	// Initialize the page to view the first item in the array of departments
 	componentDidMount() {
 		axios.get('/api/v1/departments')
 			.then( res => {
-				// debugger
 				const activeID = res.data[0].id
 				const activeName = res.data[0].name
 				this.setState( { departments: res.data, activeDepartmentId: activeID, } )
+
+				// Execute the click function
 				this.handleDeptClick(activeID, activeName, )
-				// this.renderItems()
 			})
 	}
 	
-	// componentDidMount() {
-	// 	// debugger
-		
-	// }
-
-
   updateDept = (id, newData) => {
 		axios.put(`/api/v1/departments/${id}`, {departments: {name: newData}, }, )
 			.then( res => {
-				// debugger
 				const department = this.state.departments.map( t => {
 					if (t.id === id)
 						return res.data;
@@ -45,7 +38,6 @@ class Departments extends React.Component {
 			.catch( err => {
 				console.log(err);
 			})
-
   }
 
 
@@ -60,12 +52,10 @@ class Departments extends React.Component {
 
 	handleDeptClick = (id, name ) => {
 		this.setState({ activeDepartmentId: id, activeDepartment: name })
-		// debugger
 
 		// Update State with items
 		axios.get(`/api/v1/departments/${id}/items`)
 			.then( res => {
-				// debugger
 				this.setState( { items: res.data, } )
 			})
 
@@ -108,17 +98,9 @@ class Departments extends React.Component {
 		}
 	}
 
-	// renderActiveName() {
-	// 	const { activeDepartmentId, } = this.state.activeDepartmentId
-
-
-	// }
-	
 
 	renderDepartments() {
 		const { departments, activeDepartmentId, } = this.state;
-
-		// const { departmentName } = this.state.departments[activeDepartmentId]
 
 		if ( departments.length <= 0 ) {
 			return <Header as='h2'>No Departments Found</Header>
